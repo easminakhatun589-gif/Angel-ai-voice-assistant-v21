@@ -68,38 +68,9 @@ jobs:
             echo "Decoded debug.keystore from debug.keystore.base64."
           fi
 
-          # Fallback: if app/google-services.json still does not exist, create a valid default config so build never fails
           if [ ! -f "app/google-services.json" ]; then
-            echo "Generating default app/google-services.json fallback for build..."
-            cat << 'EOF' > app/google-services.json
-{
-  "project_info": {
-    "project_number": "302461394521",
-    "project_id": "gen-lang-client-0209058951",
-    "storage_bucket": "gen-lang-client-0209058951.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:302461394521:android:767725a736dbebc8ba1b48",
-        "android_client_info": {
-          "package_name": "com.jarvis.assistant"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAZMQHL8Ukl_LsiRV0kPxAhifltGrS9hf0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {}
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
-EOF
+            echo "::error::app/google-services.json is missing!"
+            exit 1
           fi
 
       - name: Build Debug APK
