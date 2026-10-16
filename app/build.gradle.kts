@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -39,8 +41,8 @@ android {
         applicationId = "com.jarvis.assistant"
         minSdk = 26
         targetSdk = 34
-        versionCode = 144
-        versionName = "1.8.8"
+        versionCode = 145
+        versionName = "1.8.9"
 
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
@@ -58,12 +60,22 @@ android {
         buildConfigField("String", "VERIFICATION_ENDPOINT", buildConfigString(verificationEndpoint))
     }
 
+    val debugKeystoreFile = file("${rootDir}/debug.keystore")
+    val debugKeystoreBase64File = file("${rootDir}/debug.keystore.base64")
+    if (!debugKeystoreFile.exists() && debugKeystoreBase64File.exists()) {
+        try {
+            debugKeystoreFile.writeBytes(Base64.getDecoder().decode(debugKeystoreBase64File.readText().trim()))
+        } catch (_: Exception) {}
+    }
+
     signingConfigs {
         create("debugConfig") {
-            storeFile = file("${rootDir}/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            if (debugKeystoreFile.exists()) {
+                storeFile = debugKeystoreFile
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
         }
         create("release") {
             if (releaseSigningReady) {

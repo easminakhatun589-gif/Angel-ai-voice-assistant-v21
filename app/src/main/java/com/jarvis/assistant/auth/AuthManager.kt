@@ -82,10 +82,16 @@ class AuthManager(private val context: Context) {
         onCancelled: () -> Unit = {}
     ) {
         val clientId = try {
-            context.getString(R.string.default_web_client_id)
+            val resId = context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
+            if (resId != 0) {
+                context.getString(resId)
+            } else {
+                context.getString(R.string.default_web_client_id)
+            }
         } catch (e: Exception) {
-            onError("Google Sign-In configuration missing: default_web_client_id not found")
-            return
+            "302461394521-mhc1nbo1dt770eqvs7cnrpklet5t9voc.apps.googleusercontent.com"
+        }.ifBlank {
+            "302461394521-mhc1nbo1dt770eqvs7cnrpklet5t9voc.apps.googleusercontent.com"
         }
 
         val signInOption = GetSignInWithGoogleOption.Builder(serverClientId = clientId).build()
