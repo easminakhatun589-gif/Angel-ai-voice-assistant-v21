@@ -58,20 +58,24 @@ jobs:
         run: |
           mkdir -p app
 
-          # 1. If secret is provided, restore it to app/google-services.json
-          if [ -n "$GOOGLE_SERVICES_JSON_SECRET" ]; then
+          # 1. Search for any existing google-services.json in the repository and ensure it's in app/
+          if [ ! -f "app/google-services.json" ]; then
+            FOUND_FILE=$(find . -name "google-services.json" -not -path "*/build/*" | head -n 1)
+            if [ -n "$FOUND_FILE" ]; then
+              echo "Found $FOUND_FILE in repository, copying to app/google-services.json"
+              cp "$FOUND_FILE" app/google-services.json
+            fi
+          fi
+
+          # 2. If not found in repository, restore from GitHub Secret GOOGLE_SERVICES_JSON
+          if [ ! -f "app/google-services.json" ] && [ -n "$GOOGLE_SERVICES_JSON_SECRET" ]; then
+            echo "Restoring app/google-services.json from GitHub Actions secret GOOGLE_SERVICES_JSON..."
             if echo "$GOOGLE_SERVICES_JSON_SECRET" | grep -q "^{"; then
               echo "$GOOGLE_SERVICES_JSON_SECRET" > app/google-services.json
             else
               echo "$GOOGLE_SERVICES_JSON_SECRET" | base64 -d > app/google-services.json 2>/dev/null || echo "$GOOGLE_SERVICES_JSON_SECRET" > app/google-services.json
             fi
-            echo "Successfully restored app/google-services.json from repository secret GOOGLE_SERVICES_JSON."
-          fi
-
-          # 2. If present in root but not in app/, copy it
-          if [ ! -f "app/google-services.json" ] && [ -f "google-services.json" ]; then
-            cp google-services.json app/google-services.json
-            echo "Copied google-services.json from root to app/."
+            echo "Successfully created app/google-services.json from secret."
           fi
 
           # 3. Ensure debug.keystore is ready
@@ -82,10 +86,11 @@ jobs:
 
           # 4. Final verification
           if [ ! -f "app/google-services.json" ]; then
-            echo "::error::app/google-services.json is missing! Please configure the GOOGLE_SERVICES_JSON secret in GitHub repository Settings -> Secrets and variables -> Actions, or commit app/google-services.json to the repository."
+            echo "::error::app/google-services.json is missing!"
+            echo "::error::Please add a repository secret named GOOGLE_SERVICES_JSON with the contents of your google-services.json file."
             exit 1
           fi
-          echo "Verified app/google-services.json is present and valid."
+          echo "Verified app/google-services.json is present and ready for build."
 
       - name: Build Debug APK
         env:
