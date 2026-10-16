@@ -215,7 +215,7 @@ class HomeFragment : Fragment() {
     private fun setupOrbWebView() {
         binding.orbWebView.apply {
             setBackgroundColor(Color.TRANSPARENT)
-            setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
             settings.apply {
                 javaScriptEnabled = true

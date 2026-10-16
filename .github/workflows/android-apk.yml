@@ -101,7 +101,20 @@ jobs:
           META_API_KEY: ${{ secrets.META_API_KEY }}
         run: |
           echo "Building Debug APK..."
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew clean assembleDebug --no-daemon --stacktrace
+
+      - name: Archive Build Diagnostics on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-diagnostics
+          path: |
+            build/
+            app/build/
+            **/build/reports/
+            ~/.gradle/daemon/**/*.log
+          retention-days: 7
+          if-no-files-found: ignore
 
       - name: Build Release APK (Optional)
         env:

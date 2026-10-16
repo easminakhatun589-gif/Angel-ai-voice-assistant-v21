@@ -78,6 +78,7 @@ class TaskProgressOverlay(private val context: Context) {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 assetLoader.shouldInterceptRequest(request.url)
         }
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         visibility = View.VISIBLE
     }
     private val params = WindowManager.LayoutParams(

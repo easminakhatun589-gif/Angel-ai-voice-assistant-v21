@@ -90,7 +90,7 @@ class VoiceOrbSettingsActivity : AppCompatActivity() {
     private fun setupPreviewWebView() {
         binding.orbPreviewWebView.apply {
             setBackgroundColor(Color.TRANSPARENT)
-            setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true

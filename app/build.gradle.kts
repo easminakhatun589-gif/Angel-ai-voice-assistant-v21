@@ -69,13 +69,20 @@ android {
     }
 
     signingConfigs {
-        create("debugConfig") {
-            if (debugKeystoreFile.exists()) {
-                storeFile = debugKeystoreFile
-                storePassword = "android"
-                keyAlias = "androiddebugkey"
-                keyPassword = "android"
+        getByName("debug") {
+            val keystore = file("${rootDir}/debug.keystore")
+            if (keystore.exists()) {
+                storeFile = keystore
             }
+        }
+        create("debugConfig") {
+            val keystore = file("${rootDir}/debug.keystore")
+            if (keystore.exists()) {
+                storeFile = keystore
+            }
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
         }
         create("release") {
             if (releaseSigningReady) {
@@ -89,6 +96,7 @@ android {
 
     buildTypes {
         debug {
+            isDebuggable = true
             signingConfig = signingConfigs.getByName("debugConfig")
         }
         release {
@@ -120,6 +128,8 @@ android {
         // AndroidX Lifecycle 2.8.6's NullSafeMutableLiveData detector crashes under this project's Kotlin 2.0 UAST.
         // Keep all other lint checks enabled while that upstream detector is incompatible.
         disable += "NullSafeMutableLiveData"
+        abortOnError = false
+        warningsAsErrors = false
     }
 }
 

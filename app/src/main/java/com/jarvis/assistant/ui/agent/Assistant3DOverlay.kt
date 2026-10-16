@@ -43,6 +43,7 @@ class Assistant3DOverlay(private val context: Context) {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 assetLoader.shouldInterceptRequest(request.url)
         }
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
     }
 
     private val params = WindowManager.LayoutParams(
