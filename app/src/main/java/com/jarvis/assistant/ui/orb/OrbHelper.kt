@@ -46,7 +46,7 @@ class OrbHelper(
     fun setup() {
         webView.setBackgroundColor(Color.TRANSPARENT)
         try {
-            webView.setLayerType(android.view.View.LAYER_TYPE_NONE, null)
+            webView.setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null)
         } catch (_: Exception) {}
 
         val settings: WebSettings = webView.settings
