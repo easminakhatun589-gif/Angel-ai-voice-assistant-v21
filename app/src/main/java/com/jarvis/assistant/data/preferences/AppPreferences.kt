@@ -153,6 +153,7 @@ class AppPreferences(context: Context) {
         private const val KEY_FCM_LAST_ATTEMPT_TIME = "key_fcm_last_attempt_time"
         private const val KEY_FCM_LAST_ERROR = "key_fcm_last_error"
         private const val KEY_IS_GUEST_MODE = "key_is_guest_mode"
+        private const val KEY_TTS_SPEED = "key_tts_speed"
     }
 
     var isFcmTopicSubscribed: Boolean
@@ -810,6 +811,10 @@ class AppPreferences(context: Context) {
     var callAssistantDataRetentionOptIn: Boolean
         get() = prefs.getBoolean(KEY_CALL_ASSISTANT_PRIVACY_OPTIN, false)
         set(value) = prefs.edit().putBoolean(KEY_CALL_ASSISTANT_PRIVACY_OPTIN, value).apply()
+
+    var ttsSpeed: Float
+        get() = prefs.getFloat(KEY_TTS_SPEED, 1.0f)
+        set(value) = prefs.edit().putFloat(KEY_TTS_SPEED, value).apply()
 
     var liveVoiceProvider: String
         get() = prefs.getString(KEY_LIVE_VOICE_PROVIDER, "gemini") ?: "gemini"

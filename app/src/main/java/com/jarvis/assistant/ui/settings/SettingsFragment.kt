@@ -199,6 +199,14 @@ class SettingsFragment : Fragment() {
         binding.tvCurrentPersona.text = "$currentPersona • Voice: $currentVoice"
         binding.tvProfilePersonaChip.text = currentPersona.uppercase()
 
+        // TTS Speed
+        val speed = preferences.ttsSpeed
+        binding.tvCurrentTtsSpeed.text = when {
+            speed < 0.9f -> "Slow (0.8x)"
+            speed > 1.1f -> "Fast (1.2x)"
+            else -> "Normal (1.0x)"
+        }
+
         // Silent Execution Mode
         binding.switchSilentMode.isChecked = preferences.isSilentExecutionMode
 
@@ -272,6 +280,10 @@ class SettingsFragment : Fragment() {
 
         binding.rowPersonaVoice.setOnClickListener {
             startActivity(Intent(requireContext(), PersonaActivity::class.java))
+        }
+
+        binding.rowTtsSpeed.setOnClickListener {
+            showTtsSpeedDialog()
         }
 
         binding.switchSilentMode.setOnCheckedChangeListener { _, isChecked ->
@@ -482,6 +494,32 @@ class SettingsFragment : Fragment() {
                 preferences.userCountry = etCountry?.text?.toString()?.trim() ?: "India"
                 loadUserData()
                 Toast.makeText(requireContext(), "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showTtsSpeedDialog() {
+        val options = arrayOf("Slow (0.8x)", "Normal (1.0x)", "Fast (1.2x)")
+        val currentSpeed = preferences.ttsSpeed
+        val checkedItem = when {
+            currentSpeed < 0.9f -> 0
+            currentSpeed > 1.1f -> 2
+            else -> 1
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Select Voice Response Speed")
+            .setSingleChoiceItems(options, checkedItem) { dialog, which ->
+                val newSpeed = when (which) {
+                    0 -> 0.8f
+                    2 -> 1.2f
+                    else -> 1.0f
+                }
+                preferences.ttsSpeed = newSpeed
+                loadUserData()
+                Toast.makeText(requireContext(), "TTS Speed set to ${options[which]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()

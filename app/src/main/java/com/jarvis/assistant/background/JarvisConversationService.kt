@@ -611,6 +611,9 @@ class JarvisConversationService : Service() {
             tts = TextToSpeech(applicationContext) { status ->
                 if (status == TextToSpeech.SUCCESS) {
                     tts?.language = Locale.US
+                    try {
+                        tts?.setSpeechRate(preferences.ttsSpeed)
+                    } catch (_: Exception) {}
                     tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                         override fun onStart(utteranceId: String?) {
                             Log.d("JarvisService", "TTS onStart: $utteranceId")

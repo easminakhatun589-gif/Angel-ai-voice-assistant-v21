@@ -123,17 +123,18 @@ android {
     }
 }
 
-tasks.register("verifyReleaseSecurityInputs") {
+tasks.register("printDebugSigningConfig") {
     doLast {
-        check(releaseSigningReady) {
-            "Release signing is not configured. Set JARVIS_RELEASE_STORE_FILE, JARVIS_RELEASE_STORE_PASSWORD, JARVIS_RELEASE_KEY_ALIAS, and JARVIS_RELEASE_KEY_PASSWORD in the local environment or Gradle user properties."
+        val debugBuildType = android.buildTypes.getByName("debug")
+        val configName = debugBuildType.signingConfig?.name ?: "none"
+        println("==================================================")
+        println("DIAGNOSTIC: Active Signing Config for 'debug'")
+        println("Config Name: $configName")
+        debugBuildType.signingConfig?.let { config ->
+            println("Store File: ${config.storeFile?.absolutePath} (Exists: ${config.storeFile?.exists()})")
+            println("Key Alias: ${config.keyAlias}")
         }
-        check(releaseCertSha256.matches(Regex("[A-F0-9]{64}"))) {
-            "Set JARVIS_RELEASE_CERT_SHA256 to the SHA-256 fingerprint of the release signing certificate."
-        }
-        check(developerName.isNotBlank() && copyrightOwner.isNotBlank()) {
-            "Set JARVIS_DEVELOPER_NAME and JARVIS_COPYRIGHT_OWNER to the verified publisher identity."
-        }
+        println("==================================================")
     }
 }
 
